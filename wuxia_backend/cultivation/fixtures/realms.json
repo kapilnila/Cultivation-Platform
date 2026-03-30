@@ -1,0 +1,9 @@
+[
+  {"model": "cultivation.realm", "pk": 1, "fields": {"name": "Mortal",               "realm_level": 0, "base_xp": 100,   "max_lifespan": 80,   "title": "Mortal",                  "intro_text": "You are but flesh and bone."}},
+  {"model": "cultivation.realm", "pk": 2, "fields": {"name": "Body Tempering",        "realm_level": 1, "base_xp": 300,   "max_lifespan": 120,  "title": "Cultivator",              "intro_text": "Your body begins to absorb qi."}},
+  {"model": "cultivation.realm", "pk": 3, "fields": {"name": "Qi Condensation",       "realm_level": 2, "base_xp": 800,   "max_lifespan": 200,  "title": "Qi Adept",                "intro_text": "Qi flows freely through your meridians."}},
+  {"model": "cultivation.realm", "pk": 4, "fields": {"name": "Foundation Establishment","realm_level": 3, "base_xp": 2000,  "max_lifespan": 500,  "title": "Foundation Cultivator",   "intro_text": "Your golden core takes shape."}},
+  {"model": "cultivation.realm", "pk": 5, "fields": {"name": "Core Formation",        "realm_level": 4, "base_xp": 5000,  "max_lifespan": 1000, "title": "Core Elder",              "intro_text": "The golden core pulses with power."}},
+  {"model": "cultivation.realm", "pk": 6, "fields": {"name": "Nascent Soul",          "realm_level": 5, "base_xp": 15000, "max_lifespan": 3000, "title": "Nascent Soul Master",     "intro_text": "Your soul ascends beyond the mortal coil."}},
+  {"model": "cultivation.realm", "pk": 7, "fields": {"name": "Immortal Ascension",    "realm_level": 6, "base_xp": 50000, "max_lifespan": -1,   "title": "Immortal",                "intro_text": "You have transcended mortality itself."}}
+]

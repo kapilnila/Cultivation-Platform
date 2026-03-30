@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import ActivityType, XPLog, UserStreak
 
-# Register your models here.
+admin.site.register(ActivityType)
+admin.site.register(XPLog)
+admin.site.register(UserStreak)

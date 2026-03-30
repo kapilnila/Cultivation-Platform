@@ -1,0 +1,7 @@
+[
+  {"model": "activities.activitytype", "pk": 1, "fields": {"name": "Meditation",          "base_xp": 50}},
+  {"model": "activities.activitytype", "pk": 2, "fields": {"name": "Sparring",            "base_xp": 100}},
+  {"model": "activities.activitytype", "pk": 3, "fields": {"name": "Alchemy",             "base_xp": 75}},
+  {"model": "activities.activitytype", "pk": 4, "fields": {"name": "Scripture Study",     "base_xp": 60}},
+  {"model": "activities.activitytype", "pk": 5, "fields": {"name": "Breakthrough Attempt","base_xp": 200}}
+]

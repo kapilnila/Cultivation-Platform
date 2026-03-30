@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +43,7 @@ SIMPLE_JWT = {
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'users',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,14 +52,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'social',
     'cultivation',
     'clans',
     'activities',
-    'django_extensions',
+    
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -84,6 +87,12 @@ TEMPLATES = [
         },
     },
 ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://192.168.0.7:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 WSGI_APPLICATION = 'wuxia_backend.wsgi.application'
 
@@ -134,3 +143,66 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Wuxia Admin",
+    "site_header": "🐉 Wuxia Cultivation",
+    "site_brand": "Wuxia",
+    "welcome_sign": "Welcome to the Wuxia Admin Panel",
+    "copyright": "Wuxia Cultivation Platform",
+    "search_model": ["users.User", "cultivation.UserCultivation"],
+    "icons": {
+        "users.User": "fas fa-user-ninja",
+        "cultivation.Realm": "fas fa-dragon",
+        "cultivation.UserCultivation": "fas fa-chart-line",
+        "activities.ActivityType": "fas fa-fist-raised",
+        "activities.XPLog": "fas fa-star",
+        "activities.UserStreak": "fas fa-fire",
+        "clans.Clan": "fas fa-shield-alt",
+        "clans.ClanMember": "fas fa-users",
+    },
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index"},
+        {"name": "View Site", "url": "/", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": ["auth"],
+    "order_with_respect_to": [
+        "users", "cultivation", "activities", "clans", "social"
+    ],
+    "theme": "darkly",
+    "dark_mode_theme": "darkly",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-warning",
+    "accent": "accent-warning",
+    "navbar": "navbar-dark",
+    "no_navbar_border": True,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-warning",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}

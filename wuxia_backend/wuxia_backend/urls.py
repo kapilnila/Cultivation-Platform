@@ -1,27 +1,20 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-from users.views import CustomLoginView
+from django.http import JsonResponse
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 def home(request):
-    return JsonResponse({
-        "message": "Wuxia Cultivation API is running 🚀"
-    })
-    
+    return JsonResponse({"message": "Wuxia Cultivation API is running 🚀"})
+
+
 urlpatterns = [
-
+    path('', home),
     path('admin/', admin.site.urls),
-
-    # JWT
-    path('api/auth/login/', CustomLoginView.as_view(), name='token_obtain_pair'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/activities/', include('activities.urls')),
     path('api/auth/', include('users.urls')),
-    # User APIs
+    path('api/activities/', include('activities.urls')),
     path('api/cultivation/', include('cultivation.urls')),
-
-   path("api/users/", include("users.urls")),
+    path('api/users/', include('users.urls')),
+    path('api/clans/', include('clans.urls')),
 ]
