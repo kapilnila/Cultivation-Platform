@@ -1,16 +1,34 @@
 from datetime import date
+from django.core.exceptions import ObjectDoesNotExist
 from cultivation.models import UserCultivation, Realm
 from users.models import UserLocation
-from cultivation.models import Realm, UserCultivation
 from cultivation.utils import stage_multiplier, stage_name
+
 AGE_INCREMENT_YEARS = 2
+
+
+def get_or_create_realm(realm_level):
+    """
+    Safe helper to always return a Realm.
+    Prevents 500 error if DB is empty in production.
+    """
+    realm, _ = Realm.objects.get_or_create(
+        realm_level=realm_level,
+        defaults={
+            "name": "Mortal Realm",
+            "base_xp": 100,
+            "max_lifespan": 100,
+            "intro_text": "Start of your cultivation journey",
+            "title": "Novice"
+        }
+    )
+    return realm
+
 
 def update_age_on_login(user):
     cultivation, _ = UserCultivation.objects.get_or_create(user=user)
-
     today = date.today()
 
-    # First login ever
     if cultivation.last_login_date is None:
         cultivation.last_login_date = today
         cultivation.save()
@@ -20,7 +38,6 @@ def update_age_on_login(user):
             "status": "first_login"
         }
 
-    # Same-day login → no age increment
     if cultivation.last_login_date == today:
         return {
             "age_updated": False,
@@ -28,14 +45,12 @@ def update_age_on_login(user):
             "status": "already_logged_today"
         }
 
-    # Update age
     cultivation.platform_age_years += AGE_INCREMENT_YEARS
     cultivation.last_login_date = today
     cultivation.save()
 
-    realm = Realm.objects.get(realm_level=cultivation.realm_level)
+    realm = get_or_create_realm(cultivation.realm_level)
 
-    # Immortal realm → no limit
     if realm.max_lifespan == -1:
         return {
             "age_updated": True,
@@ -43,7 +58,6 @@ def update_age_on_login(user):
             "status": "immortal"
         }
 
-    # Lifespan checks
     age = cultivation.platform_age_years
     max_life = realm.max_lifespan
 
@@ -67,6 +81,7 @@ def update_age_on_login(user):
         "status": "normal"
     }
 
+
 def get_ranked_users(scope=None, value=None, limit=50):
     qs = UserCultivation.objects.select_related('user')
 
@@ -76,7 +91,6 @@ def get_ranked_users(scope=None, value=None, limit=50):
         qs = qs.filter(user__userlocation__region=value)
     elif scope == "country":
         qs = qs.filter(user__userlocation__country=value)
-    # global → no filter
 
     return qs.order_by(
         '-realm_level',
@@ -84,19 +98,23 @@ def get_ranked_users(scope=None, value=None, limit=50):
         '-total_xp',
         'platform_age_years'
     )[:limit]
-    
+
 
 def get_dashboard_data(user):
-    cultivation,_ = UserCultivation.objects.get_or_create(user=user)
-    realm = Realm.objects.get(realm_level=cultivation.realm_level)
+    # Ensure cultivation exists
+    cultivation, _ = UserCultivation.objects.get_or_create(user=user)
 
-    required_xp = realm.base_xp * stage_multiplier(cultivation.sub_level)
+    # Ensure realm exists
+    realm = get_or_create_realm(cultivation.realm_level)
+
+    # Avoid division by zero
+    required_xp = max(1, realm.base_xp * stage_multiplier(cultivation.sub_level))
 
     xp_percent = int(
         (cultivation.current_xp / required_xp) * 100
-    ) if required_xp > 0 else 0
+    )
 
-    # Lifespan checks
+    # Lifespan logic
     lifespan_status = "immortal"
     xp_blocked = False
 
