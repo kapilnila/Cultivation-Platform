@@ -111,6 +111,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
+
 WSGI_APPLICATION = 'wuxia_backend.wsgi.application'
 
 
