@@ -6,7 +6,7 @@ from cultivation.utils import stage_multiplier, stage_name
 AGE_INCREMENT_YEARS = 2
 
 def update_age_on_login(user):
-    cultivation = UserCultivation.objects.get(user=user)
+    cultivation, _ = UserCultivation.objects.get_or_create(user=user)
 
     today = date.today()
 
@@ -87,7 +87,7 @@ def get_ranked_users(scope=None, value=None, limit=50):
     
 
 def get_dashboard_data(user):
-    cultivation = UserCultivation.objects.get(user=user)
+    cultivation,_ = UserCultivation.objects.get_or_create(user=user)
     realm = Realm.objects.get(realm_level=cultivation.realm_level)
 
     required_xp = realm.base_xp * stage_multiplier(cultivation.sub_level)
