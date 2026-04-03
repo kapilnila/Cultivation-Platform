@@ -22,11 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$koj)l#xcnb1-5b68@u%!m$uewo7io&c9rer6=wuzm+&_bgob='
+# SECRET_KEY = 'django-insecure-$koj)l#xcnb1-5b68@u%!m$uewo7io&c9rer6=wuzm+&_bgob='
 
+
+SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret")
+SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -51,7 +54,6 @@ SIMPLE_JWT = {
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
     'users',
     'django.contrib.admin',
     'django.contrib.auth',
