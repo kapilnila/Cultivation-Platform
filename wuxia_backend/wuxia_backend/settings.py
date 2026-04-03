@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.onrender.com',
+    '*'
 ]
 
 AUTH_USER_MODEL = 'users.User'
