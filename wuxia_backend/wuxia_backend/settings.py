@@ -103,13 +103,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://192.168.0.7:3000",
-    "https://192.168.29.48:3000",
-    ''
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"https://.*\.vercel\.app",
-    "https://cultivation-platform.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
