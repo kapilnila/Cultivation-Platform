@@ -1,31 +1,59 @@
 # Python
-venv/
-__pycache__/
 *.pyc
-*.pyo
-*.pyd
-*.sqlite3
-db.sqlite3
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Django
-staticfiles/
-media/
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
 
 # Environment variables
 .env
+.env.local
+.env.production
+.env.*.local
 
-# Logs
-*.log
-
-# Node / Next.js
+# Node
 node_modules/
 .next/
 out/
-
-# OS files
+build/
 .DS_Store
-Thumbs.db
+*.pem
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
