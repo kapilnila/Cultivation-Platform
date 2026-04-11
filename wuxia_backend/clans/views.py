@@ -134,3 +134,4 @@ class MyClanView(APIView):
             })
         except ClanMember.DoesNotExist:
             return Response({"in_clan": False})
+    

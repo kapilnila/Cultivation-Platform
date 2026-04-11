@@ -8,3 +8,4 @@ urlpatterns = [
     path('<int:clan_id>/', ClanDetailView.as_view(), name='clan-detail'),
     path('<int:clan_id>/join/', JoinClanView.as_view(), name='join-clan'),
 ]
+
