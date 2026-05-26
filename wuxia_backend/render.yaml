@@ -11,7 +11,7 @@ services:
     plan: free  # Options: free, starter ($7), standard ($25)
     branch: main  # Git branch to deploy
     buildCommand: "sh build.sh"
-    startCommand: "gunicorn config.wsgi:application"
+    startCommand: "gunicorn wuxia_backend.wsgi:application"
     healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION

@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 // Token management
 export const getAccessToken = () => {
@@ -118,7 +118,7 @@ export const login = async (email, password) => {
 };
 
 export const register = async (userData) => {
-  const response = await fetch(`${API_URL}/api/users/register/`, {
+  const response = await fetch(`${API_URL}/api/auth/signup/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

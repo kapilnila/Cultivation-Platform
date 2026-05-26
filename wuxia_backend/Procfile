@@ -1,1 +1,1 @@
-web: gunicorn wuxia_backend.asgi:application -k uvicorn.workers.UvicornWorker
+web: gunicorn wuxia_backend.wsgi:application

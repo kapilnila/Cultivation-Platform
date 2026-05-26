@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py runserver)",
+      "Bash(pip install *)",
+      "Bash(\"c:/Users/nilak_0jgumd9/OneDrive/Desktop/Cultivation Game/venv/Scripts/pip.exe\" show setuptools)",
+      "Bash(\"c:/Users/nilak_0jgumd9/OneDrive/Desktop/Cultivation Game/venv/Scripts/python.exe\" -c \"import site; print\\(site.getsitepackages\\(\\)\\)\")",
+      "Bash(\"c:/Users/nilak_0jgumd9/OneDrive/Desktop/Cultivation Game/venv/Scripts/pip.exe\" install \"djangorestframework-simplejwt>=5.4.0\")"
+    ]
+  }
+}

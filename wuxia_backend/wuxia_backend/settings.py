@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',  # For token blacklisting
     'corsheaders',
     
-    # Your apps (adjust based on your actual app names)
+    # Your apps
     'users',
     'cultivation',
     'activities',
+    'clans',
+    'social',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'  # Adjust if your urls.py is elsewhere
+ROOT_URLCONF = 'wuxia_backend.urls'
 
 TEMPLATES = [
     {
@@ -83,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'  # Adjust if your wsgi.py is elsewhere
+WSGI_APPLICATION = 'wuxia_backend.wsgi.application'
 
 # ================================
 # DATABASE CONFIGURATION
@@ -187,8 +189,15 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ] if os.path.exists(os.path.join(BASE_DIR, 'static')) else []
 
-# WhiteNoise configuration for efficient static file serving
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise configuration for efficient static file serving (Django 4.2+ STORAGES format)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # ================================
 # MEDIA FILES (User uploads)
@@ -207,8 +216,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CUSTOM USER MODEL (if you have one)
 # ================================
 
-# Uncomment and adjust if you have a custom user model
-# AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.User'
 
 # ================================
 # REST FRAMEWORK SETTINGS
@@ -281,22 +289,20 @@ SIMPLE_JWT = {
 # ================================
 
 if not DEBUG:
-    # HTTPS
-    SECURE_SSL_REDIRECT = True
+    # Render terminates SSL at the load balancer — do NOT redirect, trust the proxy header instead
+    SECURE_SSL_REDIRECT = False
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
-    # HSTS (HTTP Strict Transport Security)
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+
+    # HSTS
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    
+
     # Other security headers
-    SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    
-    # Referrer policy
     SECURE_REFERRER_POLICY = 'same-origin'
 
 # ================================
