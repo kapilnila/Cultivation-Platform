@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -36,12 +37,12 @@ class CultivationLore(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="cultivation_lore"
+        related_name="cultivation_lore",
     )
     realm = models.ForeignKey(
         Realm,
         on_delete=models.CASCADE,
-        related_name="lore_entries"
+        related_name="lore_entries",
     )
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
