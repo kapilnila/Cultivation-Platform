@@ -13,7 +13,6 @@ class ActivityType(models.Model):
         return self.name
 
 
-
 class XPLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     activity = models.ForeignKey(ActivityType, on_delete=models.CASCADE)
@@ -35,4 +34,4 @@ class DailyActivityLog(models.Model):
     count = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ('user', 'activity', 'date')
+        unique_together = ("user", "activity", "date")
