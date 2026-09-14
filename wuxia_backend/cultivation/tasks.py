@@ -22,10 +22,17 @@ def generate_cultivation_lore(
     user_id,
     realm_level,
 ):
+    """
+    Generate an AI cultivation chronicle asynchronously
+    after a successful realm breakthrough.
+    """
+
     try:
-        user_cult = UserCultivation.objects.select_related(
-            "user"
-        ).get(user_id=user_id)
+        user_cultivation = (
+            UserCultivation.objects
+            .select_related("user")
+            .get(user_id=user_id)
+        )
 
         realm = Realm.objects.get(
             realm_level=realm_level
@@ -34,9 +41,14 @@ def generate_cultivation_lore(
         prompt = f"""
 Write a short 3-sentence cultivation breakthrough chronicle.
 
-Realm: {realm.name}
-Realm Level: {realm_level}
-Realm Title: {realm.title}
+Realm:
+{realm.name}
+
+Realm Level:
+{realm_level}
+
+Realm Title:
+{realm.title}
 
 Tone:
 - cinematic
@@ -44,7 +56,12 @@ Tone:
 - epic
 - concise
 
-Do not mention AI or game mechanics.
+The chronicle should describe the warrior breaking
+through into this new realm.
+
+Do not mention AI.
+Do not mention programming.
+Do not mention game mechanics.
 """
 
         model = genai.GenerativeModel(
@@ -56,7 +73,7 @@ Do not mention AI or game mechanics.
         story_text = response.text.strip()
 
         CultivationLore.objects.create(
-            user=user_cult.user,
+            user=user_cultivation.user,
             realm=realm,
             text=story_text,
         )
