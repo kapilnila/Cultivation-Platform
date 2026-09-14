@@ -1,17 +1,18 @@
 from django.db import transaction
 
 from cultivation.models import UserCultivation, Realm
+from activities.models import XPLog
 
 
 def grant_xp(user, activity):
     """
     Grant XP and safely handle cultivation progression.
 
-    Row-level locking prevents concurrent requests for the same
-    user from overwriting each other's progression.
+    select_for_update() prevents concurrent requests for the same
+    user's cultivation record from overwriting each other's changes.
     """
 
-    xp_to_add = activity.xp_reward
+    xp_to_add = activity.base_xp
 
     with transaction.atomic():
 
@@ -24,11 +25,17 @@ def grant_xp(user, activity):
         user_cult.current_xp += xp_to_add
         user_cult.total_xp += xp_to_add
 
+        XPLog.objects.create(
+            user=user,
+            activity=activity,
+            xp_gained=xp_to_add,
+        )
+
         leveled_up = False
         realm_name = None
 
-        # Handle progression.
         while True:
+
             try:
                 current_realm = Realm.objects.get(
                     realm_level=user_cult.realm_level
@@ -44,7 +51,7 @@ def grant_xp(user, activity):
                     realm_level=user_cult.realm_level + 1
                 )
             except Realm.DoesNotExist:
-                # Already at the highest configured realm.
+                # User has reached the highest configured realm.
                 break
 
             user_cult.current_xp -= current_realm.base_xp
