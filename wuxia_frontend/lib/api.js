@@ -1,139 +1,79 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+import axios from "axios";
 
-// Token management
-export const getAccessToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('access_token');
-  }
-  return null;
-};
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+).replace(/\/$/, "");
 
-export const setAccessToken = (token) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('access_token', token);
-  }
-};
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-export const getRefreshToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('refresh_token');
-  }
-  return null;
-};
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
 
-export const setRefreshToken = (token) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('refresh_token', token);
-  }
-};
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
 
-export const clearTokens = () => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-  }
-};
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// API client with automatic token refresh
-export const apiClient = async (endpoint, options = {}) => {
-  const url = `${API_URL}${endpoint}`;
-  const accessToken = getAccessToken();
-  
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-  };
-  
-  if (accessToken) {
-    defaultHeaders['Authorization'] = `Bearer ${accessToken}`;
-  }
-  
-  const config = {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-  };
-  
-  try {
-    let response = await fetch(url, config);
-    
-    // If unauthorized, try to refresh token
-    if (response.status === 401 && accessToken) {
-      const refreshToken = getRefreshToken();
+api.interceptors.response.use(
+  (response) => response,
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest?._retry &&
+      typeof window !== "undefined"
+    ) {
+      originalRequest._retry = true;
+
+      const refreshToken = localStorage.getItem("refresh_token");
+
       if (refreshToken) {
-        const refreshResponse = await fetch(`${API_URL}/api/auth/refresh/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ refresh: refreshToken }),
-        });
-        
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          setAccessToken(data.access);
-          
-          // Retry original request with new token
-          config.headers['Authorization'] = `Bearer ${data.access}`;
-          response = await fetch(url, config);
-        } else {
-          // Refresh failed, clear tokens and redirect to login
-          clearTokens();
-          window.location.href = '/login';
-          return null;
+        try {
+          const response = await axios.post(
+            `${API_URL}/api/auth/refresh/`,
+            {
+              refresh: refreshToken,
+            }
+          );
+
+          const newAccessToken = response.data.access;
+
+          localStorage.setItem(
+            "access_token",
+            newAccessToken
+          );
+
+          originalRequest.headers.Authorization =
+            `Bearer ${newAccessToken}`;
+
+          return api(originalRequest);
+        } catch (refreshError) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+
+          window.location.href = "/login";
+
+          return Promise.reject(refreshError);
         }
       }
     }
-    
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw error;
-  }
-};
 
-// Authentication APIs
-export const login = async (email, password) => {
-  const response = await fetch(`${API_URL}/api/auth/login/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Login failed');
+    return Promise.reject(error);
   }
-  
-  const data = await response.json();
-  setAccessToken(data.access);
-  setRefreshToken(data.refresh);
-  return data;
-};
+);
 
-export const register = async (userData) => {
-  const response = await fetch(`${API_URL}/api/auth/signup/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Registration failed');
-  }
-  
-  return await response.json();
-};
-
-export const logout = () => {
-  clearTokens();
-  window.location.href = '/login';
-};
+export default api;
