@@ -18,12 +18,33 @@ class Realm(models.Model):
 
 class UserCultivation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
     realm_level = models.IntegerField(default=0)
     sub_level = models.IntegerField(default=1)
+
     current_xp = models.IntegerField(default=0)
-    total_xp = models.IntegerField(default=0)           # ← ADDED
+    total_xp = models.IntegerField(default=0)
+
     platform_age_years = models.IntegerField(default=0)
     last_login_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - Realm {self.realm_level}"
+
+
+class CultivationLore(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="cultivation_lore"
+    )
+    realm = models.ForeignKey(
+        Realm,
+        on_delete=models.CASCADE,
+        related_name="lore_entries"
+    )
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.realm.name}"
